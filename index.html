@@ -27,7 +27,7 @@
         .confirm-text { color: var(--text-light); margin-bottom: 25px; font-size: 0.9em; }
         .confirm-actions { display: flex; gap: 10px; justify-content: center; }
         .btn-confirm { flex: 1; padding: 12px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; color: white; transition: 0.2s; }
-        .btn-cancel { flex: 1; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; font-weight: 600; cursor: pointer; background: white; color: var(--text-dark); }
+        .btn-cancel { flex: 1; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; font-weight: 600; cursor: background: white; color: var(--text-dark); }
         .btn-confirm.danger { background: var(--accent-color); box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3); }
         .btn-confirm.primary { background: var(--primary-color); box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); }
         @keyframes popIn { to { transform: scale(1); } }
@@ -139,10 +139,58 @@
         }
         @media screen and (min-width: 1025px) { .close-cart-btn { display: none; } }
 
-        /* --- BASIC CSS FOR PRINT (JS WILL HANDLE THE REST) --- */
+        /* --- UPDATED PRINT SETTINGS FOR PERFECT 80MM NORMAL PRINT --- */
         @media print {
-            @page { margin: 0; }
-            body, html { width: 100% !important; margin: 0 !important; padding: 0 !important; background: #fff !important; }
+            /* ෆෝන් එකේ බ්‍රවුසරයට බලෙන් 80mm කොළේක හැඩය දීම */
+            @page { margin: 0; size: 80mm 2000mm; } 
+            
+            /* පිටිපස්සේ තියෙන ඇප් එක ප්‍රින්ට් වෙද්දී සම්පූර්ණයෙන්ම නොපෙනී යන්න හැදීම */
+            body > *:not(#receiptPreviewModal) { display: none !important; }
+            
+            body, html { background: white !important; margin: 0 !important; padding: 0 !important; width: 80mm !important; }
+            
+            #receiptPreviewModal {
+                display: block !important;
+                position: static !important;
+                width: 80mm !important;
+                margin: 0 auto !important;
+                padding: 0 !important;
+                background: white !important;
+            }
+            
+            .modal-content {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+            
+            .modal-content > h3, .no-print { display: none !important; }
+            
+            #print-area {
+                width: 78mm !important; /* 80mm කොළේට හරියටම ගැලපෙන්න */
+                margin: 0 auto !important;
+                padding: 2mm !important;
+                border: none !important;
+                font-size: 18px !important; /* අකුරු ලොකුවට සහ පැහැදිලිව */
+                font-weight: bold !important;
+                color: #000 !important;
+                text-align: center !important;
+                box-sizing: border-box !important;
+            }
+            
+            /* ලෝගෝ එක ලස්සනට මැදට ගන්න */
+            #recShopLogo {
+                display: block !important;
+                margin: 0 auto 5px auto !important;
+                max-width: 80px !important;
+            }
+            
+            #print-area table { width: 100% !important; font-size: 16px !important; margin: 5px 0 !important; border-collapse: collapse !important; }
+            #print-area table th, #print-area table td { text-align: left !important; padding: 2px 0 !important; }
+            #print-area table th:last-child, #print-area table td:last-child { text-align: right !important; }
         }
     </style>
 </head>
@@ -368,8 +416,10 @@
                 <button class="action-btn" onclick="sendWhatsApp()" style="background:#25D366; color:white; width:auto; padding:8px 15px; margin:0;"><span style="font-size:1.2em;">📱</span></button>
             </div>
             
-            <button class="action-btn pay-btn no-print" onclick="printNormal()" style="margin-bottom: 5px;">Print (Normal)</button>
+            <!-- දැන් බොත්තම් දෙකම නිවැරදිව වැඩ කරයි -->
+            <button class="action-btn pay-btn no-print" onclick="window.print()" style="margin-bottom: 5px;">Print (Normal)</button>
             <button class="action-btn no-print" style="background:#8b5cf6; color:white; margin-bottom: 5px;" onclick="printWithRawBT()">🚀 1-Click RawBT Print</button>
+            
             <button class="action-btn no-print" style="background:#e2e8f0;color:black;margin-top:5px;" onclick="closeAndNew()">New Sale</button>
         </div>
     </div>
@@ -932,31 +982,7 @@
             const encodedUri = encodeURI(csvContent); const link = document.createElement("a"); link.setAttribute("href", encodedUri); link.setAttribute("download", "sales.csv"); document.body.appendChild(link); link.click(); 
         }
 
-        // --- SPECIAL PRINT NORMAL FUNCTION (FORCES FULL SCREEN WIDTH) ---
-        function printNormal() {
-            var printContents = document.getElementById('print-area').innerHTML;
-            var originalContents = document.body.innerHTML;
-            
-            // බිල් එක විතරක් මුළු තිරයම පිරෙන්න හැදීම
-            document.body.innerHTML = '<div style="width:100%; max-width:100%; margin:0; padding:10px 0; font-family:sans-serif; font-size:22px; font-weight:bold; color:black; text-align:center;">' + printContents + '</div>';
-            
-            // Print වෙන්න ඕනේ නැති බොත්තම් අයින් කිරීම
-            var noPrints = document.querySelectorAll('.no-print');
-            for(var i=0; i<noPrints.length; i++) { noPrints[i].style.display = 'none'; }
-            
-            var tables = document.querySelectorAll('table');
-            for(var i=0; i<tables.length; i++) { tables[i].style.width = '100%'; tables[i].style.fontSize = '20px'; }
-            
-            window.print();
-            
-            // Print වුණාට පස්සේ පරණ කෝඩ් එක රීස්ටෝ කරලා රීලෝඩ් කිරීම
-            setTimeout(function() {
-                document.body.innerHTML = originalContents;
-                window.location.reload();
-            }, 1000);
-        }
-
-        // --- 1-CLICK RAWBT PRINT FUNCTION (PREMIUM LOGO SUPPORT) ---
+        // --- FIXED 1-CLICK RAWBT PRINT FUNCTION ---
         function printWithRawBT() {
             try {
                 var printAreaElement = document.getElementById('print-area');
@@ -977,8 +1003,10 @@
                 var bottomStr = '<\/body><\/html>';
                 
                 var htmlData = topStr + printDiv.innerHTML + bottomStr;
-                var encodedData = btoa(unescape(encodeURIComponent(htmlData)));
-                var intentUrl = 'intent:data:text/html;base64,' + encodedData + '#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end;';
+                var base64Data = btoa(unescape(encodeURIComponent(htmlData)));
+                
+                // හිස් පිටුවක් එන එක නවත්වන්න encodeURIComponent මගින් Base64 කේතය ආරක්ෂා කර ඇත
+                var intentUrl = 'intent:data:text/html;base64,' + encodeURIComponent(base64Data) + '#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end;';
                 
                 window.location.href = intentUrl;
             } catch (e) {
