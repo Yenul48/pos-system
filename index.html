@@ -150,37 +150,38 @@
             width: 100%;
             max-width: 350px;
             margin: 10px auto;
-            padding: 15px;
+            padding: 20px 15px; /* ඉඩ වැඩි කර ඇත */
             font-family: 'Poppins', sans-serif;
             color: #000;
             text-align: center;
             border: 1px solid #e2e8f0;
             border-radius: 12px;
             box-sizing: border-box;
+            line-height: 1.6; /* පේළි අතර දුර වැඩි කර ඇත */
         }
         #recShopLogo {
             display: block;
-            margin: 0 auto 10px auto;
-            max-width: 65px;
+            margin: 0 auto 15px auto;
+            max-width: 75px;
             border-radius: 8px;
         }
-        #recShopName { margin: 0 0 4px 0; font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.2; }
-        #print-area p { margin: 4px 0; font-size: 13px; font-weight: 500; color: #222; line-height: 1.4; }
+        #recShopName { margin: 0 0 10px 0; font-size: 22px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.3; }
+        #print-area p { margin: 8px 0; font-size: 14px; font-weight: 500; color: #222; line-height: 1.5; }
         
-        .receipt-divider { border-top: 1px dashed #777; margin: 12px 0; }
+        .receipt-divider { border-top: 2px dashed #777; margin: 18px 0; }
         
-        .receipt-header-info { display: flex; justify-content: space-between; font-size: 13px; font-weight: 500; text-align: left; line-height: 1.4; }
+        .receipt-header-info { display: flex; justify-content: space-between; font-size: 14px; font-weight: 500; text-align: left; line-height: 1.6; margin-bottom: 8px; }
         
-        #print-area table { width: 100%; font-size: 14px; font-weight: 500; margin: 10px 0; border-collapse: collapse; }
-        #print-area table th { font-weight: 700; border-bottom: 1px dashed #777; padding-bottom: 8px; }
-        #print-area table th, #print-area table td { text-align: left; padding: 6px 0; line-height: 1.4; }
+        #print-area table { width: 100%; font-size: 15px; font-weight: 500; margin: 15px 0; border-collapse: collapse; }
+        #print-area table th { font-weight: 700; border-bottom: 2px dashed #777; padding-bottom: 12px; margin-bottom: 8px; }
+        #print-area table th, #print-area table td { text-align: left; padding: 10px 0; line-height: 1.5; }
         #print-area table th:last-child, #print-area table td:last-child { text-align: right; }
         
-        .receipt-totals-row { display: flex; justify-content: space-between; font-size: 14px; font-weight: 500; margin-top: 4px; line-height: 1.4; }
-        .receipt-net-total { font-size: 18px; font-weight: 800; border-top: 1px dashed #777; border-bottom: 1px dashed #777; padding: 8px 0; margin: 8px 0; }
-        .receipt-balance { font-weight: 700; font-size: 15px; margin-top: 6px; }
+        .receipt-totals-row { display: flex; justify-content: space-between; font-size: 15px; font-weight: 600; margin-top: 10px; line-height: 1.6; }
+        .receipt-net-total { font-size: 20px; font-weight: 800; border-top: 2px dashed #777; border-bottom: 2px dashed #777; padding: 12px 0; margin: 12px 0; }
+        .receipt-balance { font-weight: 700; font-size: 16px; margin-top: 10px; }
         
-        #recFooter { margin-top: 15px; font-size: 13px; font-weight: 600; text-align: center; line-height: 1.4; }
+        #recFooter { margin-top: 25px; font-size: 14px; font-weight: 600; text-align: center; line-height: 1.6; }
 
         /* --- PERFECT 80MM NORMAL PRINT CSS --- */
         @media print {
@@ -437,7 +438,7 @@
                 <div class="receipt-totals-row"><span>Sub Total:</span><span id="rec-subtotal">0.00</span></div>
                 <div class="receipt-totals-row"><span>Discount:</span><span id="rec-discount">0.00</span></div>
                 <div class="receipt-totals-row receipt-net-total"><span>NET TOTAL:</span><span id="rec-total">0.00</span></div>
-                <div class="receipt-totals-row" style="margin-top:8px;"><span>Cash:</span><span id="rec-cash">0.00</span></div>
+                <div class="receipt-totals-row" style="margin-top:12px;"><span>Cash:</span><span id="rec-cash">0.00</span></div>
                 <div class="receipt-totals-row receipt-balance"><span>Balance:</span><span id="rec-balance">0.00</span></div>
                 
                 <p id="recFooter">Thank You!</p>
@@ -1014,13 +1015,12 @@
             const encodedUri = encodeURI(csvContent); const link = document.createElement("a"); link.setAttribute("href", encodedUri); link.setAttribute("download", "sales.csv"); document.body.appendChild(link); link.click(); 
         }
 
-        // --- 1-CLICK RAWBT PRINT (FULL HEIGHT & CENTER FIX) ---
+        // --- 1-CLICK RAWBT PRINT (PERFECT 80MM IMAGE METHOD) ---
         function printWithRawBT() {
             showToast("Generating Receipt...", "success");
             var printArea = document.getElementById('print-area');
             
             // අපි බිල් එකේ හරියටම කොපි එකක් හදලා තිරයෙන් පිටත (Invisible) තියනවා.
-            // එතකොට තිරයේ උස (85vh) මේකට බලපාන්නේ නැහැ. බිල් එකට ඕනේ තරම් දිගට යන්න පුළුවන්.
             var clone = printArea.cloneNode(true);
             
             var logos = clone.querySelectorAll('img');
@@ -1029,24 +1029,25 @@
                     logos[i].parentNode.removeChild(logos[i]);
                 } else {
                     logos[i].style.maxWidth = '100px';
-                    logos[i].style.margin = '0 auto 10px auto';
+                    logos[i].style.margin = '0 auto 15px auto';
                     logos[i].style.display = 'block';
                 }
             }
             
-            // තිරයේ සීමාවන් කැඩීමට ක්ලෝන එක වෙනස් කිරීම
+            // තිරයේ සීමාවන් කැඩීමට සහ Padding එකතු කිරීමට ක්ලෝන එක වෙනස් කිරීම
             clone.style.position = 'absolute';
             clone.style.top = '0';
-            clone.style.left = '-9999px'; // තිරයෙන් එළියට දැමීම
+            clone.style.left = '-9999px'; 
             clone.style.width = '384px'; 
-            clone.style.height = 'auto'; // උස සීමාවක් නැත (දිගටම ප්‍රින්ට් වේ)
+            clone.style.height = 'auto'; 
             clone.style.maxHeight = 'none';
             clone.style.overflow = 'visible';
             clone.style.margin = '0';
-            clone.style.padding = '10px 10px 40px 10px';
+            clone.style.padding = '20px 20px 60px 20px'; // යටට සහ වටේට හොඳට ඉඩ දුන්නා
             clone.style.background = 'white';
             clone.style.border = 'none';
             clone.style.borderRadius = '0';
+            clone.style.lineHeight = '1.6'; // පේළි අතර පරතරය
             
             document.body.appendChild(clone);
 
@@ -1055,9 +1056,9 @@
                 useCORS: true,
                 backgroundColor: "#ffffff",
                 width: 384,
-                windowHeight: clone.scrollHeight + 50 // කැන්වස් එකේ උස දිගු කිරීම
+                windowHeight: clone.scrollHeight + 50 
             }).then(function(canvas) {
-                document.body.removeChild(clone); // වැඩේ ඉවර වුණාම ක්ලෝන එක මැකීම
+                document.body.removeChild(clone); 
                 
                 var imgData = canvas.toDataURL("image/png");
                 var intentUrl = 'intent:' + imgData + '#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end;';
