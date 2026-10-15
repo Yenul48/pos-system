@@ -148,7 +148,7 @@
         #print-area {
             background: white;
             width: 100%;
-            max-width: 320px;
+            max-width: 350px;
             margin: 10px auto;
             padding: 15px;
             font-family: 'Poppins', sans-serif;
@@ -164,41 +164,41 @@
             max-width: 65px;
             border-radius: 8px;
         }
-        #recShopName { margin: 0 0 2px 0; font-size: 18px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
-        #print-area p { margin: 2px 0; font-size: 12px; font-weight: 500; color: #333; }
+        #recShopName { margin: 0 0 2px 0; font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        #print-area p { margin: 2px 0; font-size: 13px; font-weight: 500; color: #333; }
         
         .receipt-divider { border-top: 1px dashed #777; margin: 10px 0; }
         
-        .receipt-header-info { display: flex; justify-content: space-between; font-size: 12px; font-weight: 500; text-align: left; line-height: 1.4; }
+        .receipt-header-info { display: flex; justify-content: space-between; font-size: 13px; font-weight: 500; text-align: left; line-height: 1.4; }
         
-        #print-area table { width: 100%; font-size: 13px; font-weight: 500; margin: 10px 0; border-collapse: collapse; }
+        #print-area table { width: 100%; font-size: 14px; font-weight: 500; margin: 10px 0; border-collapse: collapse; }
         #print-area table th { font-weight: 700; border-bottom: 1px dashed #777; padding-bottom: 6px; }
         #print-area table th, #print-area table td { text-align: left; padding: 5px 0; }
         #print-area table th:last-child, #print-area table td:last-child { text-align: right; }
         
-        .receipt-totals-row { display: flex; justify-content: space-between; font-size: 13px; font-weight: 500; margin-top: 4px; }
-        .receipt-net-total { font-size: 17px; font-weight: 800; border-top: 1px dashed #777; border-bottom: 1px dashed #777; padding: 6px 0; margin: 6px 0; }
-        .receipt-balance { font-weight: 700; font-size: 14px; margin-top: 4px; }
+        .receipt-totals-row { display: flex; justify-content: space-between; font-size: 14px; font-weight: 500; margin-top: 4px; }
+        .receipt-net-total { font-size: 18px; font-weight: 800; border-top: 1px dashed #777; border-bottom: 1px dashed #777; padding: 6px 0; margin: 6px 0; }
+        .receipt-balance { font-weight: 700; font-size: 15px; margin-top: 4px; }
         
-        #recFooter { margin-top: 15px; font-size: 12px; font-weight: 600; text-align: center; }
+        #recFooter { margin-top: 15px; font-size: 13px; font-weight: 600; text-align: center; }
 
         /* --- PERFECT 80MM NORMAL PRINT CSS --- */
         @media print {
             @page { margin: 0; size: 80mm auto; }
             body > *:not(#receiptPreviewModal) { display: none !important; }
-            body, html { background: white !important; margin: 0 !important; padding: 0 !important; width: 100% !important; display: flex !important; justify-content: center !important; }
+            body, html { background: white !important; margin: 0 !important; padding: 0 !important; width: 100% !important; display: block !important; }
             
             #receiptPreviewModal {
-                display: flex !important;
-                justify-content: center !important;
-                align-items: flex-start !important;
-                position: static !important;
+                display: block !important;
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
                 width: 100% !important;
                 margin: 0 !important; padding: 0 !important;
                 background: white !important;
             }
             .modal-content {
-                width: 80mm !important; /* Force center in print */
+                width: 76mm !important;
                 margin: 0 auto !important; padding: 0 !important;
                 box-shadow: none !important; border: none !important;
             }
@@ -212,9 +212,6 @@
                 border: none !important;
                 border-radius: 0 !important;
             }
-            #print-area p, #print-area table, .receipt-totals-row { font-size: 13px !important; }
-            #recShopName { font-size: 19px !important; }
-            .receipt-net-total { font-size: 18px !important; }
         }
     </style>
 </head>
@@ -414,7 +411,7 @@
     
     <!-- SUPER BEAUTIFUL RECEIPT PREVIEW -->
     <div id="receiptPreviewModal" class="modal" style="z-index:9000;">
-        <div class="modal-content" style="max-width:350px;">
+        <div class="modal-content" style="max-width:400px;">
             <div id="print-area">
                 <img id="recShopLogo" src="" style="display: none;">
                 <h3 id="recShopName">SHOP NAME</h3>
@@ -1017,12 +1014,11 @@
             const encodedUri = encodeURI(csvContent); const link = document.createElement("a"); link.setAttribute("href", encodedUri); link.setAttribute("download", "sales.csv"); document.body.appendChild(link); link.click(); 
         }
 
-        // --- 1-CLICK RAWBT PRINT (PERFECT 80MM IMAGE METHOD) ---
+        // --- 1-CLICK RAWBT PRINT (PERFECT 576px CENTERED IMAGE) ---
         function printWithRawBT() {
             showToast("Generating Receipt...", "success");
             var printArea = document.getElementById('print-area');
             
-            // Hide buttons before capture
             var actionBtns = document.querySelectorAll('.no-print');
             for(var i=0; i<actionBtns.length; i++) { actionBtns[i].style.display = 'none'; }
             
@@ -1031,20 +1027,19 @@
             var originalMargin = printArea.style.margin;
             var originalBorder = printArea.style.border;
             
-            // 80mm printers have exactly 576 dots per line width. 
-            // 288px width * scale 2 = 576px perfect fit
-            printArea.style.width = '288px'; 
-            printArea.style.maxWidth = '288px';
+            // 80mm printers have exactly 576 dots per line. 
+            // Setting base width to 384px and scale to 1.5 gives exactly 576px.
+            printArea.style.width = '384px'; 
+            printArea.style.maxWidth = '384px';
             printArea.style.margin = '0 auto';
             printArea.style.border = 'none';
 
             html2canvas(printArea, { 
-                scale: 2, 
+                scale: 1.5, 
                 useCORS: true,
                 backgroundColor: "#ffffff",
-                width: 288
+                width: 384
             }).then(function(canvas) {
-                // Restore original styles
                 printArea.style.width = originalWidth;
                 printArea.style.maxWidth = originalMaxWidth;
                 printArea.style.margin = originalMargin;
