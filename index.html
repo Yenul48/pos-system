@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>GSM Ultimate POS - OCTECH</title>
+    <!-- Barcode Scanner Library -->
     <script src="https://unpkg.com/html5-qrcode"></script>
+    <!-- Image Generator Library for Perfect Print -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@400;600;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -27,7 +30,7 @@
         .confirm-text { color: var(--text-light); margin-bottom: 25px; font-size: 0.9em; }
         .confirm-actions { display: flex; gap: 10px; justify-content: center; }
         .btn-confirm { flex: 1; padding: 12px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; color: white; transition: 0.2s; }
-        .btn-cancel { flex: 1; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; font-weight: 600; cursor: background: white; color: var(--text-dark); }
+        .btn-cancel { flex: 1; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; font-weight: 600; cursor: pointer; background: white; color: var(--text-dark); }
         .btn-confirm.danger { background: var(--accent-color); box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3); }
         .btn-confirm.primary { background: var(--primary-color); box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); }
         @keyframes popIn { to { transform: scale(1); } }
@@ -139,58 +142,33 @@
         }
         @media screen and (min-width: 1025px) { .close-cart-btn { display: none; } }
 
-        /* --- UPDATED PRINT SETTINGS FOR PERFECT 80MM NORMAL PRINT --- */
+        /* PERFECT 80MM CSS FOR IMAGE GENERATION */
+        #print-area {
+            background: white;
+            width: 320px; /* හරියටම 80mm වලට ගැලපෙන පළලක් */
+            margin: 10px auto;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            color: black;
+            text-align: center;
+            border: 1px dashed #ccc;
+            box-sizing: border-box;
+        }
+        #recShopLogo {
+            display: block;
+            margin: 0 auto 5px auto;
+            max-width: 80px;
+        }
+        #print-area table { width: 100%; font-size: 16px; margin: 8px 0; border-collapse: collapse; }
+        #print-area table th, #print-area table td { text-align: left; padding: 4px 0; }
+        #print-area table th:last-child, #print-area table td:last-child { text-align: right; }
+
         @media print {
-            /* ෆෝන් එකේ බ්‍රවුසරයට බලෙන් 80mm කොළේක හැඩය දීම */
-            @page { margin: 0; size: 80mm 2000mm; } 
-            
-            /* පිටිපස්සේ තියෙන ඇප් එක ප්‍රින්ට් වෙද්දී සම්පූර්ණයෙන්ම නොපෙනී යන්න හැදීම */
             body > *:not(#receiptPreviewModal) { display: none !important; }
-            
-            body, html { background: white !important; margin: 0 !important; padding: 0 !important; width: 80mm !important; }
-            
-            #receiptPreviewModal {
-                display: block !important;
-                position: static !important;
-                width: 80mm !important;
-                margin: 0 auto !important;
-                padding: 0 !important;
-                background: white !important;
-            }
-            
-            .modal-content {
-                width: 100% !important;
-                max-width: 100% !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                box-shadow: none !important;
-                border: none !important;
-            }
-            
-            .modal-content > h3, .no-print { display: none !important; }
-            
-            #print-area {
-                width: 78mm !important; /* 80mm කොළේට හරියටම ගැලපෙන්න */
-                margin: 0 auto !important;
-                padding: 2mm !important;
-                border: none !important;
-                font-size: 18px !important; /* අකුරු ලොකුවට සහ පැහැදිලිව */
-                font-weight: bold !important;
-                color: #000 !important;
-                text-align: center !important;
-                box-sizing: border-box !important;
-            }
-            
-            /* ලෝගෝ එක ලස්සනට මැදට ගන්න */
-            #recShopLogo {
-                display: block !important;
-                margin: 0 auto 5px auto !important;
-                max-width: 80px !important;
-            }
-            
-            #print-area table { width: 100% !important; font-size: 16px !important; margin: 5px 0 !important; border-collapse: collapse !important; }
-            #print-area table th, #print-area table td { text-align: left !important; padding: 2px 0 !important; }
-            #print-area table th:last-child, #print-area table td:last-child { text-align: right !important; }
+            #receiptPreviewModal { position: absolute; left:0; top:0; margin:0; padding:0; width: 100%; }
+            .no-print, .modal-content > h3 { display: none !important; }
+            #print-area { border: none !important; margin: 0 !important; width: 100% !important; }
         }
     </style>
 </head>
@@ -393,22 +371,22 @@
             <h3>Receipt Ready</h3>
             <div id="print-area" style="background:white;padding:10px;border:1px dashed #ccc;margin:10px auto; width: 100%;">
                 <div style="text-align:center; margin-bottom:5px;">
-                    <img id="recShopLogo" src="" style="max-width: 60px; max-height: 60px; display: none; margin: 0 auto; border-radius: 8px;">
+                    <img id="recShopLogo" src="" style="max-width: 80px; display: none; margin: 0 auto 5px auto;">
                 </div>
                 <h3 style="margin:0; text-align:center;" id="recShopName">SHOP NAME</h3>
-                <p style="margin:0;font-size:12px; text-align:center;" id="recShopAddr">Address</p>
-                <p style="margin:0;font-size:12px; text-align:center;" id="recShopPhone">Tel: 000</p>
+                <p style="margin:0; text-align:center;" id="recShopAddr">Address</p>
+                <p style="margin:0; text-align:center;" id="recShopPhone">Tel: 000</p>
                 <hr style="border-top:1px dashed #000;margin:5px 0;">
-                <div style="display:flex;justify-content:space-between;font-size:12px;text-align:left;"><div><span>Inv: <span id="rec-inv"></span></span><br><span id="rec-time" style="font-size:11px;color:#333;"></span></div><div style="text-align:right;" id="rec-date"></div></div>
+                <div style="display:flex;justify-content:space-between;text-align:left;"><div><span>Inv: <span id="rec-inv"></span></span><br><span id="rec-time" style="color:#333;"></span></div><div style="text-align:right;" id="rec-date"></div></div>
                 <hr style="border-top:1px dashed #000;margin:5px 0;">
-                <table style="width:100%;font-size:12px;text-align:left;"><thead><tr><th>Item</th><th>Qty</th><th style="text-align:right;">Amt</th></tr></thead><tbody id="rec-items"></tbody></table>
+                <table style="width:100%;text-align:left;"><thead><tr><th>Item</th><th>Qty</th><th style="text-align:right;">Amt</th></tr></thead><tbody id="rec-items"></tbody></table>
                 <hr style="border-top:1px dashed #000;margin:5px 0;">
-                <div style="display:flex;justify-content:space-between;font-size:12px;"><span>Sub Total:</span><span id="rec-subtotal">0.00</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:12px;"><span>Discount:</span><span id="rec-discount">0.00</span></div>
-                <div style="display:flex;justify-content:space-between;font-weight:bold;font-size:14px;border-top:1px solid #000;padding-top:2px;"><span>NET TOTAL:</span><span id="rec-total">0.00</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:12px;margin-top:5px;"><span>Cash:</span><span id="rec-cash">0.00</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:12px;"><span>Balance:</span><span id="rec-balance">0.00</span></div>
-                <p style="margin-top:10px;font-size:12px; text-align:center;" id="recFooter">Thank You!</p>
+                <div style="display:flex;justify-content:space-between;"><span>Sub Total:</span><span id="rec-subtotal">0.00</span></div>
+                <div style="display:flex;justify-content:space-between;"><span>Discount:</span><span id="rec-discount">0.00</span></div>
+                <div style="display:flex;justify-content:space-between;font-weight:bold;border-top:1px solid #000;padding-top:2px;"><span>NET TOTAL:</span><span id="rec-total">0.00</span></div>
+                <div style="display:flex;justify-content:space-between;margin-top:5px;"><span>Cash:</span><span id="rec-cash">0.00</span></div>
+                <div style="display:flex;justify-content:space-between;"><span>Balance:</span><span id="rec-balance">0.00</span></div>
+                <p style="margin-top:10px; text-align:center;" id="recFooter">Thank You!</p>
             </div>
             
             <div style="display:flex; gap:5px; margin-bottom:10px;" class="no-print">
@@ -416,10 +394,8 @@
                 <button class="action-btn" onclick="sendWhatsApp()" style="background:#25D366; color:white; width:auto; padding:8px 15px; margin:0;"><span style="font-size:1.2em;">📱</span></button>
             </div>
             
-            <!-- දැන් බොත්තම් දෙකම නිවැරදිව වැඩ කරයි -->
             <button class="action-btn pay-btn no-print" onclick="window.print()" style="margin-bottom: 5px;">Print (Normal)</button>
             <button class="action-btn no-print" style="background:#8b5cf6; color:white; margin-bottom: 5px;" onclick="printWithRawBT()">🚀 1-Click RawBT Print</button>
-            
             <button class="action-btn no-print" style="background:#e2e8f0;color:black;margin-top:5px;" onclick="closeAndNew()">New Sale</button>
         </div>
     </div>
@@ -982,36 +958,45 @@
             const encodedUri = encodeURI(csvContent); const link = document.createElement("a"); link.setAttribute("href", encodedUri); link.setAttribute("download", "sales.csv"); document.body.appendChild(link); link.click(); 
         }
 
-        // --- FIXED 1-CLICK RAWBT PRINT FUNCTION ---
+        // --- 100% PERFECT IMAGE PRINT METHOD ---
+        // මේ ක්‍රමයෙන් බිල් එක ඇතුළෙදීම පින්තූරයක් බවට පත් කරලා RawBT එකට යවනවා
+        // එතකොට අකුරු වෙනස් වෙන්නේ නැහැ, ලෝගෝ එකයි සයිස් එකයි 100% ක් ලස්සනට ප්‍රින්ට් වෙනවා.
         function printWithRawBT() {
-            try {
-                var printAreaElement = document.getElementById('print-area');
-                var printDiv = printAreaElement.cloneNode(true);
+            showToast("Generating Receipt...", "success");
+            
+            var printArea = document.getElementById('print-area');
+            
+            // පින්තූරය ගන්න කලින් බොත්තම් නොපෙනී යන්න හැදීම
+            var actionBtns = document.querySelectorAll('.no-print');
+            for(var i=0; i<actionBtns.length; i++) { actionBtns[i].style.display = 'none'; }
+            
+            // 80mm වලට හරියන පළලක් තාවකාලිකව දීම (Pixel වලින්)
+            var originalWidth = printArea.style.width;
+            var originalMargin = printArea.style.margin;
+            printArea.style.width = '380px'; 
+            printArea.style.margin = '0';
+
+            html2canvas(printArea, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: "#ffffff",
+                width: printArea.scrollWidth
+            }).then(function(canvas) {
+                // කෝඩ් එක ආපහු සාමාන්‍ය තත්ත්වයට පත් කිරීම
+                printArea.style.width = originalWidth;
+                printArea.style.margin = originalMargin;
+                for(var i=0; i<actionBtns.length; i++) { actionBtns[i].style.display = 'flex'; }
                 
-                var logos = printDiv.querySelectorAll('img');
-                for (var i = 0; i < logos.length; i++) {
-                    if (logos[i].style.display === 'none') {
-                        logos[i].parentNode.removeChild(logos[i]);
-                    } else {
-                        logos[i].style.maxWidth = '100px';
-                        logos[i].style.margin = '0 auto 10px auto';
-                        logos[i].style.display = 'block';
-                    }
-                }
+                var imgData = canvas.toDataURL("image/png");
                 
-                var topStr = '<html><head><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>body{font-family:sans-serif;text-align:center;margin:0;padding:0;width:100%;font-size:24px;color:#000;font-weight:bold;} table{width:100%;font-size:22px;margin:10px 0;border-collapse:collapse;} th,td{padding:4px 0;border:none;} th:last-child,td:last-child{text-align:right;} hr{border-top:2px dashed #000;margin:10px 0;border-bottom:none;}<\/style><\/head><body>';
-                var bottomStr = '<\/body><\/html>';
-                
-                var htmlData = topStr + printDiv.innerHTML + bottomStr;
-                var base64Data = btoa(unescape(encodeURIComponent(htmlData)));
-                
-                // හිස් පිටුවක් එන එක නවත්වන්න encodeURIComponent මගින් Base64 කේතය ආරක්ෂා කර ඇත
-                var intentUrl = 'intent:data:text/html;base64,' + encodeURIComponent(base64Data) + '#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end;';
-                
+                // RawBT Image Intent (කෙලින්ම පින්තූරය යැවීම)
+                var intentUrl = 'intent:' + imgData + '#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end;';
                 window.location.href = intentUrl;
-            } catch (e) {
-                alert("RawBT Error: " + e.message);
-            }
+                
+            }).catch(function(error) {
+                showToast("Print failed. Please try again.", "error");
+                for(var i=0; i<actionBtns.length; i++) { actionBtns[i].style.display = 'flex'; }
+            });
         }
 
         let html5QrCode;
