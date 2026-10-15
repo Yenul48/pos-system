@@ -142,33 +142,79 @@
         }
         @media screen and (min-width: 1025px) { .close-cart-btn { display: none; } }
 
-        /* PERFECT 80MM CSS FOR IMAGE GENERATION */
+        /* ====================================================
+           🔥 SUPER BEAUTIFUL RECEIPT DESIGN (CSS) 🔥 
+           ==================================================== */
         #print-area {
             background: white;
-            width: 320px; /* හරියටම 80mm වලට ගැලපෙන පළලක් */
+            width: 100%;
+            max-width: 320px;
             margin: 10px auto;
             padding: 15px;
-            font-size: 18px;
-            font-weight: bold;
-            color: black;
+            font-family: 'Poppins', sans-serif;
+            color: #000;
             text-align: center;
-            border: 1px dashed #ccc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
             box-sizing: border-box;
         }
         #recShopLogo {
             display: block;
-            margin: 0 auto 5px auto;
-            max-width: 80px;
+            margin: 0 auto 10px auto;
+            max-width: 65px;
+            border-radius: 8px;
         }
-        #print-area table { width: 100%; font-size: 16px; margin: 8px 0; border-collapse: collapse; }
-        #print-area table th, #print-area table td { text-align: left; padding: 4px 0; }
+        #recShopName { margin: 0 0 2px 0; font-size: 18px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        #print-area p { margin: 2px 0; font-size: 12px; font-weight: 500; color: #333; }
+        
+        .receipt-divider { border-top: 1px dashed #777; margin: 10px 0; }
+        
+        .receipt-header-info { display: flex; justify-content: space-between; font-size: 12px; font-weight: 500; text-align: left; line-height: 1.4; }
+        
+        #print-area table { width: 100%; font-size: 13px; font-weight: 500; margin: 10px 0; border-collapse: collapse; }
+        #print-area table th { font-weight: 700; border-bottom: 1px dashed #777; padding-bottom: 6px; }
+        #print-area table th, #print-area table td { text-align: left; padding: 5px 0; }
         #print-area table th:last-child, #print-area table td:last-child { text-align: right; }
+        
+        .receipt-totals-row { display: flex; justify-content: space-between; font-size: 13px; font-weight: 500; margin-top: 4px; }
+        .receipt-net-total { font-size: 17px; font-weight: 800; border-top: 1px dashed #777; border-bottom: 1px dashed #777; padding: 6px 0; margin: 6px 0; }
+        .receipt-balance { font-weight: 700; font-size: 14px; margin-top: 4px; }
+        
+        #recFooter { margin-top: 15px; font-size: 12px; font-weight: 600; text-align: center; }
 
+        /* --- PERFECT 80MM NORMAL PRINT CSS --- */
         @media print {
+            @page { margin: 0; size: 80mm auto; }
             body > *:not(#receiptPreviewModal) { display: none !important; }
-            #receiptPreviewModal { position: absolute; left:0; top:0; margin:0; padding:0; width: 100%; }
-            .no-print, .modal-content > h3 { display: none !important; }
-            #print-area { border: none !important; margin: 0 !important; width: 100% !important; }
+            body, html { background: white !important; margin: 0 !important; padding: 0 !important; width: 100% !important; display: flex !important; justify-content: center !important; }
+            
+            #receiptPreviewModal {
+                display: flex !important;
+                justify-content: center !important;
+                align-items: flex-start !important;
+                position: static !important;
+                width: 100% !important;
+                margin: 0 !important; padding: 0 !important;
+                background: white !important;
+            }
+            .modal-content {
+                width: 80mm !important; /* Force center in print */
+                margin: 0 auto !important; padding: 0 !important;
+                box-shadow: none !important; border: none !important;
+            }
+            .modal-content > h3, .no-print { display: none !important; }
+            
+            #print-area {
+                width: 76mm !important;
+                max-width: 76mm !important;
+                margin: 0 auto !important;
+                padding: 2mm !important;
+                border: none !important;
+                border-radius: 0 !important;
+            }
+            #print-area p, #print-area table, .receipt-totals-row { font-size: 13px !important; }
+            #recShopName { font-size: 19px !important; }
+            .receipt-net-total { font-size: 18px !important; }
         }
     </style>
 </head>
@@ -366,37 +412,50 @@
 
     <div id="checkoutModal" class="modal"><div class="modal-content"><span style="float:right;cursor:pointer;" onclick="closeModal('checkoutModal')">&times;</span><h2 style="text-align:center;">Checkout</h2><div style="text-align:center;font-size:2.5em;font-weight:800;color:var(--primary-color);margin:15px 0;" id="modalTotal">0.00</div><div style="display:flex; gap:10px; margin-bottom:15px;"><div class="form-group" style="flex:1;"><label>Payment Method</label><select id="payMethod" onchange="togglePaymentMethod()" style="font-weight:bold;"><option value="cash">💵 Cash</option><option value="card">💳 Card / Visa</option><option value="online">📲 Online / QR</option></select></div></div><div style="display:flex; gap:10px; margin-bottom:10px;"><div class="form-group" style="flex:1;"><input type="number" id="discPercent" placeholder="Disc %" onkeyup="applyDiscount('percent')"></div><div class="form-group" style="flex:1;"><input type="number" id="discAmount" placeholder="Disc Rs" onkeyup="applyDiscount('amount')"></div></div><div style="text-align:right; font-weight:bold; margin-bottom:10px;">Net Total: <span id="netTotalDisplay" style="color:var(--secondary-color);">0.00</span></div><div class="form-group"><label>Amount Received</label><input type="number" id="cashInput" onkeyup="calculateBalance()" placeholder="Amount..." autofocus></div><div style="text-align:center;font-weight:700;color:var(--text-dark);background:#e2e8f0;padding:12px;border-radius:10px; font-size:1.1em;" id="balanceDisplay">Balance: 0.00</div><button class="action-btn pay-btn" style="margin-top:20px;" onclick="processSale()">Complete Sale (Enter)</button></div></div>
     
+    <!-- SUPER BEAUTIFUL RECEIPT PREVIEW -->
     <div id="receiptPreviewModal" class="modal" style="z-index:9000;">
-        <div class="modal-content" style="max-width:350px;text-align:center;">
-            <h3>Receipt Ready</h3>
-            <div id="print-area" style="background:white;padding:10px;border:1px dashed #ccc;margin:10px auto; width: 100%;">
-                <div style="text-align:center; margin-bottom:5px;">
-                    <img id="recShopLogo" src="" style="max-width: 80px; display: none; margin: 0 auto 5px auto;">
+        <div class="modal-content" style="max-width:350px;">
+            <div id="print-area">
+                <img id="recShopLogo" src="" style="display: none;">
+                <h3 id="recShopName">SHOP NAME</h3>
+                <p id="recShopAddr">Address</p>
+                <p id="recShopPhone">Tel: 000</p>
+                
+                <div class="receipt-divider"></div>
+                
+                <div class="receipt-header-info">
+                    <div><span>Inv: <span id="rec-inv"></span></span><br><span id="rec-time" style="color:#555;"></span></div>
+                    <div style="text-align:right;" id="rec-date"></div>
                 </div>
-                <h3 style="margin:0; text-align:center;" id="recShopName">SHOP NAME</h3>
-                <p style="margin:0; text-align:center;" id="recShopAddr">Address</p>
-                <p style="margin:0; text-align:center;" id="recShopPhone">Tel: 000</p>
-                <hr style="border-top:1px dashed #000;margin:5px 0;">
-                <div style="display:flex;justify-content:space-between;text-align:left;"><div><span>Inv: <span id="rec-inv"></span></span><br><span id="rec-time" style="color:#333;"></span></div><div style="text-align:right;" id="rec-date"></div></div>
-                <hr style="border-top:1px dashed #000;margin:5px 0;">
-                <table style="width:100%;text-align:left;"><thead><tr><th>Item</th><th>Qty</th><th style="text-align:right;">Amt</th></tr></thead><tbody id="rec-items"></tbody></table>
-                <hr style="border-top:1px dashed #000;margin:5px 0;">
-                <div style="display:flex;justify-content:space-between;"><span>Sub Total:</span><span id="rec-subtotal">0.00</span></div>
-                <div style="display:flex;justify-content:space-between;"><span>Discount:</span><span id="rec-discount">0.00</span></div>
-                <div style="display:flex;justify-content:space-between;font-weight:bold;border-top:1px solid #000;padding-top:2px;"><span>NET TOTAL:</span><span id="rec-total">0.00</span></div>
-                <div style="display:flex;justify-content:space-between;margin-top:5px;"><span>Cash:</span><span id="rec-cash">0.00</span></div>
-                <div style="display:flex;justify-content:space-between;"><span>Balance:</span><span id="rec-balance">0.00</span></div>
-                <p style="margin-top:10px; text-align:center;" id="recFooter">Thank You!</p>
+                
+                <div class="receipt-divider"></div>
+                
+                <table>
+                    <thead><tr><th>Item</th><th style="text-align:center;">Qty</th><th>Amt</th></tr></thead>
+                    <tbody id="rec-items"></tbody>
+                </table>
+                
+                <div class="receipt-divider"></div>
+                
+                <div class="receipt-totals-row"><span>Sub Total:</span><span id="rec-subtotal">0.00</span></div>
+                <div class="receipt-totals-row"><span>Discount:</span><span id="rec-discount">0.00</span></div>
+                <div class="receipt-totals-row receipt-net-total"><span>NET TOTAL:</span><span id="rec-total">0.00</span></div>
+                <div class="receipt-totals-row" style="margin-top:8px;"><span>Cash:</span><span id="rec-cash">0.00</span></div>
+                <div class="receipt-totals-row receipt-balance"><span>Balance:</span><span id="rec-balance">0.00</span></div>
+                
+                <p id="recFooter">Thank You!</p>
             </div>
             
-            <div style="display:flex; gap:5px; margin-bottom:10px;" class="no-print">
-                <input type="text" id="waPhone" placeholder="Customer Mobile (Optional)" style="flex:1; padding:8px; border:1px solid #ddd; border-radius:8px;">
-                <button class="action-btn" onclick="sendWhatsApp()" style="background:#25D366; color:white; width:auto; padding:8px 15px; margin:0;"><span style="font-size:1.2em;">📱</span></button>
+            <div style="display:flex; gap:5px; margin-bottom:10px; padding:0 15px;" class="no-print">
+                <input type="text" id="waPhone" placeholder="Customer Mobile (Optional)" style="flex:1; padding:10px; border:1px solid #ddd; border-radius:8px; outline:none;">
+                <button class="action-btn" onclick="sendWhatsApp()" style="background:#25D366; color:white; width:auto; padding:10px 18px; margin:0;"><span style="font-size:1.2em;">📱</span></button>
             </div>
             
-            <button class="action-btn pay-btn no-print" onclick="window.print()" style="margin-bottom: 5px;">Print (Normal)</button>
-            <button class="action-btn no-print" style="background:#8b5cf6; color:white; margin-bottom: 5px;" onclick="printWithRawBT()">🚀 1-Click RawBT Print</button>
-            <button class="action-btn no-print" style="background:#e2e8f0;color:black;margin-top:5px;" onclick="closeAndNew()">New Sale</button>
+            <div style="padding: 0 15px;">
+                <button class="action-btn pay-btn no-print" onclick="window.print()" style="margin-bottom: 5px;">Print (Normal)</button>
+                <button class="action-btn no-print" style="background:#8b5cf6; color:white; margin-bottom: 5px;" onclick="printWithRawBT()">🚀 1-Click RawBT Print</button>
+                <button class="action-btn no-print" style="background:#e2e8f0;color:black;margin-top:5px;" onclick="closeAndNew()">New Sale</button>
+            </div>
         </div>
     </div>
 
@@ -916,7 +975,7 @@
             document.getElementById('recShopName').innerText = shopDetails.name; 
             document.getElementById('recShopAddr').innerText = shopDetails.address; 
             document.getElementById('recShopPhone').innerText = "Tel: " + shopDetails.phone; 
-            document.getElementById('recFooter').innerHTML = shopDetails.footer + '<br><br><small style="font-size:9px;color:#777;text-transform:uppercase;">System by OCTECH TECHNOLOGY<br>074 326 3317</small>'; 
+            document.getElementById('recFooter').innerHTML = shopDetails.footer + '<br><br><small style="font-size:9px;color:#777;text-transform:uppercase;font-weight:400;">System by OCTECH TECHNOLOGY<br>074 326 3317</small>'; 
             document.getElementById('rec-inv').innerText = s.inv; 
             
             const logoImg = document.getElementById('recShopLogo');
@@ -924,7 +983,7 @@
 
             let payLabel = "CASH"; if(s.payMethod === 'card') payLabel = "CARD"; if(s.payMethod === 'online') payLabel = "ONLINE"; 
             
-            document.getElementById('rec-date').innerHTML = s.date + '<br>' + payLabel; 
+            document.getElementById('rec-date').innerHTML = s.date + '<br><strong>' + payLabel + '</strong>'; 
             document.getElementById('rec-time').innerText = s.time;
             
             document.getElementById('rec-subtotal').innerText = (s.subTotal || s.total).toFixed(2); 
@@ -943,7 +1002,7 @@
             let htmlItems = "";
             for(let i=0; i<s.items.length; i++){
                 let item = s.items[i];
-                htmlItems += '<tr><td>' + item.name + '</td><td>' + item.qty + '</td><td style="text-align:right;">' + (item.price*item.qty).toFixed(2) + '</td></tr>';
+                htmlItems += '<tr><td>' + item.name + '</td><td style="text-align:center;">' + item.qty + '</td><td style="text-align:right;">' + (item.price*item.qty).toFixed(2) + '</td></tr>';
             }
             document.getElementById('rec-items').innerHTML = htmlItems;
             document.getElementById('receiptPreviewModal').style.display = 'flex'; 
@@ -958,49 +1017,51 @@
             const encodedUri = encodeURI(csvContent); const link = document.createElement("a"); link.setAttribute("href", encodedUri); link.setAttribute("download", "sales.csv"); document.body.appendChild(link); link.click(); 
         }
 
-        // --- 100% PERFECT IMAGE PRINT METHOD ---
-        // මේ ක්‍රමයෙන් බිල් එක ඇතුළෙදීම පින්තූරයක් බවට පත් කරලා RawBT එකට යවනවා
-        // එතකොට අකුරු වෙනස් වෙන්නේ නැහැ, ලෝගෝ එකයි සයිස් එකයි 100% ක් ලස්සනට ප්‍රින්ට් වෙනවා.
+        // --- 1-CLICK RAWBT PRINT (PERFECT 80MM IMAGE METHOD) ---
         function printWithRawBT() {
             showToast("Generating Receipt...", "success");
-            
             var printArea = document.getElementById('print-area');
             
-            // පින්තූරය ගන්න කලින් බොත්තම් නොපෙනී යන්න හැදීම
+            // Hide buttons before capture
             var actionBtns = document.querySelectorAll('.no-print');
             for(var i=0; i<actionBtns.length; i++) { actionBtns[i].style.display = 'none'; }
             
-            // 80mm වලට හරියන පළලක් තාවකාලිකව දීම (Pixel වලින්)
             var originalWidth = printArea.style.width;
+            var originalMaxWidth = printArea.style.maxWidth;
             var originalMargin = printArea.style.margin;
-            printArea.style.width = '380px'; 
-            printArea.style.margin = '0';
+            var originalBorder = printArea.style.border;
+            
+            // 80mm printers have exactly 576 dots per line width. 
+            // 288px width * scale 2 = 576px perfect fit
+            printArea.style.width = '288px'; 
+            printArea.style.maxWidth = '288px';
+            printArea.style.margin = '0 auto';
+            printArea.style.border = 'none';
 
             html2canvas(printArea, { 
                 scale: 2, 
                 useCORS: true,
                 backgroundColor: "#ffffff",
-                width: printArea.scrollWidth
+                width: 288
             }).then(function(canvas) {
-                // කෝඩ් එක ආපහු සාමාන්‍ය තත්ත්වයට පත් කිරීම
+                // Restore original styles
                 printArea.style.width = originalWidth;
+                printArea.style.maxWidth = originalMaxWidth;
                 printArea.style.margin = originalMargin;
+                printArea.style.border = originalBorder;
                 for(var i=0; i<actionBtns.length; i++) { actionBtns[i].style.display = 'flex'; }
                 
                 var imgData = canvas.toDataURL("image/png");
-                
-                // RawBT Image Intent (කෙලින්ම පින්තූරය යැවීම)
                 var intentUrl = 'intent:' + imgData + '#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end;';
                 window.location.href = intentUrl;
                 
             }).catch(function(error) {
-                showToast("Print failed. Please try again.", "error");
+                showToast("Print Error", "error");
                 for(var i=0; i<actionBtns.length; i++) { actionBtns[i].style.display = 'flex'; }
             });
         }
 
         let html5QrCode;
-        
         function openScanner() {
             document.getElementById('scannerModal').style.display = 'flex';
             html5QrCode = new Html5Qrcode("reader");
