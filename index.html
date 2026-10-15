@@ -140,62 +140,54 @@
         @media screen and (min-width: 1025px) { .close-cart-btn { display: none; } }
 
         /* --- UPDATED PRINT SETTINGS FOR 80mm CENTER ALIGNMENT --- */
-     /* --- THERMAL PRINTER FIX FOR BLANK PAGE / FULL WIDTH --- */
+     /* --- PERFECT 80MM NORMAL PRINT SETTINGS WITH LOGO --- */
         @media print {
-            @page { margin: 0; }
-            
-            /* පිටිපස්සේ තියෙන ඇප් එකේ ඉඩ සම්පූර්ණයෙන්ම ඉවත් කිරීම */
-            body > *:not(#receiptPreviewModal) { display: none !important; }
-            
-            body, html { 
-                background: white !important; 
-                margin: 0 !important; 
-                padding: 0 !important; 
-                height: auto !important; 
-            }
+            @page { margin: 0; size: 80mm auto; }
+            html, body { width: 80mm !important; margin: 0 !important; padding: 0 !important; background: #fff !important; }
+            body * { visibility: hidden; }
             
             #receiptPreviewModal {
-                display: block !important;
-                position: static !important;
-                width: 100% !important;
-                height: auto !important;
+                visibility: visible !important;
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 80mm !important;
                 margin: 0 !important;
                 padding: 0 !important;
                 background: white !important;
             }
+            #receiptPreviewModal * { visibility: visible !important; }
+            .no-print, .modal-content > h3 { display: none !important; }
             
             .modal-content {
-                width: 100% !important;
-                max-width: 100% !important;
-                height: auto !important;
-                max-height: none !important; /* මෙතනින් තමයි හිස් කොළේ එන එක නැවැත්තුවේ */
-                overflow: visible !important; /* බිල් එක සම්පූර්ණයෙන් පේන්න හැදීම */
-                margin: 0 !important;
-                padding: 0 !important;
                 box-shadow: none !important;
                 border: none !important;
-                background: transparent !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
             }
-            
-            .modal-content > h3, .no-print { display: none !important; }
             
             #print-area {
-                display: block !important;
-                width: 100% !important;
-                max-width: 100% !important;
-                height: auto !important;
-                overflow: visible !important;
-                margin: 0 !important;
-                padding: 3mm !important;
+                width: 76mm !important; /* 80mm කොළේට හරියටම ගැලපෙන්න */
+                margin: 0 auto !important;
+                padding: 0 !important;
                 border: none !important;
-                font-size: 18px !important; /* පැහැදිලි ලොකු අකුරු */
-                font-weight: 600 !important;
-                color: #000 !important;
-                box-sizing: border-box !important;
+                font-size: 18px !important; /* අකුරු ලොකුවට සහ පැහැදිලිව */
+                font-weight: bold !important; /* අකුරු තද කර ඇත */
+                color: black !important;
+                text-align: center !important;
             }
             
-            #print-area table { width: 100% !important; font-size: 16px !important; margin: 5px 0 !important; }
-            #print-area table th, #print-area table td { text-align: left !important; padding: 2px 0 !important; }
+            /* ලෝගෝ එක ලස්සනට මැදට ගන්න */
+            #recShopLogo {
+                display: block !important;
+                margin: 0 auto 5px auto !important;
+                max-width: 75px !important;
+                max-height: 75px !important;
+            }
+            
+            #print-area table { width: 100% !important; font-size: 16px !important; margin: 5px 0 !important; border-collapse: collapse !important; }
+            #print-area table th, #print-area table td { text-align: left !important; padding: 3px 0 !important; }
             #print-area table th:last-child, #print-area table td:last-child { text-align: right !important; }
         }
     </style>
