@@ -35,7 +35,7 @@
 
         #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); z-index: 10000; display: flex; justify-content: center; align-items: center; }
         .login-box { display: flex; background: white; border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); width: 990px; max-width: 95%; height: 600px; overflow: hidden; }
-        .login-image-side { flex: 1.2; background-image: url('shop.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; display: flex; flex-direction: column; justify-content: center; padding: 40px; color: white; position: relative; }
+        .login-image-side { flex: 1.2; background-image: url('shop.jpg'); background-color: #3b82f6; background-size: cover; background-position: center; background-repeat: no-repeat; display: flex; flex-direction: column; justify-content: center; padding: 40px; color: white; position: relative; }
         .login-form-side { flex: 1; padding: 40px; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #ffffff; }
         .pin-display { width: 100%; background: #f1f5f9; padding: 10px; border-radius: 12px; font-size: 2em; letter-spacing: 12px; font-weight: bold; color: #334155; margin-bottom: 20px; height: 60px; line-height: 40px; text-align: center; }
         .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%; max-width: 280px; }
@@ -139,56 +139,10 @@
         }
         @media screen and (min-width: 1025px) { .close-cart-btn { display: none; } }
 
-        /* --- UPDATED PRINT SETTINGS FOR 80mm CENTER ALIGNMENT --- */
-     /* --- PERFECT 80MM NORMAL PRINT SETTINGS WITH LOGO --- */
+        /* --- BASIC CSS FOR PRINT (JS WILL HANDLE THE REST) --- */
         @media print {
-            @page { margin: 0; size: 80mm auto; }
-            html, body { width: 80mm !important; margin: 0 !important; padding: 0 !important; background: #fff !important; }
-            body * { visibility: hidden; }
-            
-            #receiptPreviewModal {
-                visibility: visible !important;
-                position: absolute !important;
-                left: 0 !important;
-                top: 0 !important;
-                width: 80mm !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                background: white !important;
-            }
-            #receiptPreviewModal * { visibility: visible !important; }
-            .no-print, .modal-content > h3 { display: none !important; }
-            
-            .modal-content {
-                box-shadow: none !important;
-                border: none !important;
-                width: 100% !important;
-                margin: 0 !important;
-                padding: 0 !important;
-            }
-            
-            #print-area {
-                width: 76mm !important; /* 80mm කොළේට හරියටම ගැලපෙන්න */
-                margin: 0 auto !important;
-                padding: 0 !important;
-                border: none !important;
-                font-size: 18px !important; /* අකුරු ලොකුවට සහ පැහැදිලිව */
-                font-weight: bold !important; /* අකුරු තද කර ඇත */
-                color: black !important;
-                text-align: center !important;
-            }
-            
-            /* ලෝගෝ එක ලස්සනට මැදට ගන්න */
-            #recShopLogo {
-                display: block !important;
-                margin: 0 auto 5px auto !important;
-                max-width: 75px !important;
-                max-height: 75px !important;
-            }
-            
-            #print-area table { width: 100% !important; font-size: 16px !important; margin: 5px 0 !important; border-collapse: collapse !important; }
-            #print-area table th, #print-area table td { text-align: left !important; padding: 3px 0 !important; }
-            #print-area table th:last-child, #print-area table td:last-child { text-align: right !important; }
+            @page { margin: 0; }
+            body, html { width: 100% !important; margin: 0 !important; padding: 0 !important; background: #fff !important; }
         }
     </style>
 </head>
@@ -414,7 +368,7 @@
                 <button class="action-btn" onclick="sendWhatsApp()" style="background:#25D366; color:white; width:auto; padding:8px 15px; margin:0;"><span style="font-size:1.2em;">📱</span></button>
             </div>
             
-            <button class="action-btn pay-btn no-print" onclick="window.print()" style="margin-bottom: 5px;">Print (Normal HTML)</button>
+            <button class="action-btn pay-btn no-print" onclick="printNormal()" style="margin-bottom: 5px;">Print (Normal)</button>
             <button class="action-btn no-print" style="background:#8b5cf6; color:white; margin-bottom: 5px;" onclick="printWithRawBT()">🚀 1-Click RawBT Print</button>
             <button class="action-btn no-print" style="background:#e2e8f0;color:black;margin-top:5px;" onclick="closeAndNew()">New Sale</button>
         </div>
@@ -978,31 +932,60 @@
             const encodedUri = encodeURI(csvContent); const link = document.createElement("a"); link.setAttribute("href", encodedUri); link.setAttribute("download", "sales.csv"); document.body.appendChild(link); link.click(); 
         }
 
-        // --- 1-CLICK RAWBT TEXT PRINT (PERFECT TEXT RECEIPT) ---
-        // --- 1-CLICK RAWBT PRINT FUNCTION (FULL WIDTH & CENTER FIXED) ---
-        function printWithRawBT() {
-            var printAreaElement = document.getElementById('print-area');
-            var printDiv = printAreaElement.cloneNode(true);
+        // --- SPECIAL PRINT NORMAL FUNCTION (FORCES FULL SCREEN WIDTH) ---
+        function printNormal() {
+            var printContents = document.getElementById('print-area').innerHTML;
+            var originalContents = document.body.innerHTML;
             
-            var logos = printDiv.querySelectorAll('img');
-            for (var i = 0; i < logos.length; i++) {
-                if (logos[i].style.display === 'none') {
-                    logos[i].parentNode.removeChild(logos[i]);
-                }
-            }
+            // බිල් එක විතරක් මුළු තිරයම පිරෙන්න හැදීම
+            document.body.innerHTML = '<div style="width:100%; max-width:100%; margin:0; padding:10px 0; font-family:sans-serif; font-size:22px; font-weight:bold; color:black; text-align:center;">' + printContents + '</div>';
             
-            // RawBT ඇප් එකට හරියන්න අකුරු ලොකු කරලා (22px), පළල 100% දීලා, ගණන් දකුණු පැත්තට align කරලා තියෙනවා
-            var topStr = '<html><head><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>body{font-family:sans-serif;text-align:center;margin:0;padding:0;width:100%;font-size:22px;color:#000;font-weight:bold;} table{width:100%;font-size:22px;text-align:left;} th,td{padding:2px;border:none;} th:last-child,td:last-child{text-align:right;} hr{border-top:2px dashed #000;margin:5px 0;border-bottom:none;}<\/style><\/head><body>';
+            // Print වෙන්න ඕනේ නැති බොත්තම් අයින් කිරීම
+            var noPrints = document.querySelectorAll('.no-print');
+            for(var i=0; i<noPrints.length; i++) { noPrints[i].style.display = 'none'; }
             
-            var bottomStr = '<\/body><\/html>';
+            var tables = document.querySelectorAll('table');
+            for(var i=0; i<tables.length; i++) { tables[i].style.width = '100%'; tables[i].style.fontSize = '20px'; }
             
-            var htmlData = topStr + printDiv.innerHTML + bottomStr;
+            window.print();
             
-            var encodedData = btoa(unescape(encodeURIComponent(htmlData)));
-            var intentUrl = 'intent:data:text/html;base64,' + encodedData + '#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end;';
-            
-            window.location.href = intentUrl;
+            // Print වුණාට පස්සේ පරණ කෝඩ් එක රීස්ටෝ කරලා රීලෝඩ් කිරීම
+            setTimeout(function() {
+                document.body.innerHTML = originalContents;
+                window.location.reload();
+            }, 1000);
         }
+
+        // --- 1-CLICK RAWBT PRINT FUNCTION (PREMIUM LOGO SUPPORT) ---
+        function printWithRawBT() {
+            try {
+                var printAreaElement = document.getElementById('print-area');
+                var printDiv = printAreaElement.cloneNode(true);
+                
+                var logos = printDiv.querySelectorAll('img');
+                for (var i = 0; i < logos.length; i++) {
+                    if (logos[i].style.display === 'none') {
+                        logos[i].parentNode.removeChild(logos[i]);
+                    } else {
+                        logos[i].style.maxWidth = '100px';
+                        logos[i].style.margin = '0 auto 10px auto';
+                        logos[i].style.display = 'block';
+                    }
+                }
+                
+                var topStr = '<html><head><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>body{font-family:sans-serif;text-align:center;margin:0;padding:0;width:100%;font-size:24px;color:#000;font-weight:bold;} table{width:100%;font-size:22px;margin:10px 0;border-collapse:collapse;} th,td{padding:4px 0;border:none;} th:last-child,td:last-child{text-align:right;} hr{border-top:2px dashed #000;margin:10px 0;border-bottom:none;}<\/style><\/head><body>';
+                var bottomStr = '<\/body><\/html>';
+                
+                var htmlData = topStr + printDiv.innerHTML + bottomStr;
+                var encodedData = btoa(unescape(encodeURIComponent(htmlData)));
+                var intentUrl = 'intent:data:text/html;base64,' + encodedData + '#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end;';
+                
+                window.location.href = intentUrl;
+            } catch (e) {
+                alert("RawBT Error: " + e.message);
+            }
+        }
+
         let html5QrCode;
         
         function openScanner() {
