@@ -150,14 +150,14 @@
             width: 100%;
             max-width: 350px;
             margin: 10px auto;
-            padding: 20px 15px; /* ඉඩ වැඩි කර ඇත */
+            padding: 20px 15px;
             font-family: 'Poppins', sans-serif;
             color: #000;
             text-align: center;
             border: 1px solid #e2e8f0;
             border-radius: 12px;
             box-sizing: border-box;
-            line-height: 1.6; /* පේළි අතර දුර වැඩි කර ඇත */
+            line-height: 1.6;
         }
         #recShopLogo {
             display: block;
@@ -205,11 +205,12 @@
             }
             .modal-content > h3, .no-print { display: none !important; }
             
-            #print-area {
+            #print-area, #kot-print-area {
                 width: 76mm !important;
                 max-width: 76mm !important;
                 margin: 0 auto !important;
-                padding: 2mm !important;
+                /* restaurant bill ge usata print agalu bottom padding 40mm kottiddene */
+                padding: 2mm 2mm 40mm 2mm !important; 
                 border: none !important;
                 border-radius: 0 !important;
             }
@@ -410,9 +411,11 @@
 
     <div id="checkoutModal" class="modal"><div class="modal-content"><span style="float:right;cursor:pointer;" onclick="closeModal('checkoutModal')">&times;</span><h2 style="text-align:center;">Checkout</h2><div style="text-align:center;font-size:2.5em;font-weight:800;color:var(--primary-color);margin:15px 0;" id="modalTotal">0.00</div><div style="display:flex; gap:10px; margin-bottom:15px;"><div class="form-group" style="flex:1;"><label>Payment Method</label><select id="payMethod" onchange="togglePaymentMethod()" style="font-weight:bold;"><option value="cash">💵 Cash</option><option value="card">💳 Card / Visa</option><option value="online">📲 Online / QR</option></select></div></div><div style="display:flex; gap:10px; margin-bottom:10px;"><div class="form-group" style="flex:1;"><input type="number" id="discPercent" placeholder="Disc %" onkeyup="applyDiscount('percent')"></div><div class="form-group" style="flex:1;"><input type="number" id="discAmount" placeholder="Disc Rs" onkeyup="applyDiscount('amount')"></div></div><div style="text-align:right; font-weight:bold; margin-bottom:10px;">Net Total: <span id="netTotalDisplay" style="color:var(--secondary-color);">0.00</span></div><div class="form-group"><label>Amount Received</label><input type="number" id="cashInput" onkeyup="calculateBalance()" placeholder="Amount..." autofocus></div><div style="text-align:center;font-weight:700;color:var(--text-dark);background:#e2e8f0;padding:12px;border-radius:10px; font-size:1.1em;" id="balanceDisplay">Balance: 0.00</div><button class="action-btn pay-btn" style="margin-top:20px;" onclick="processSale()">Complete Sale (Enter)</button></div></div>
     
-    <!-- SUPER BEAUTIFUL RECEIPT PREVIEW -->
+    <!-- SUPER BEAUTIFUL RECEIPT PREVIEW (UPDATED WITH KOT) -->
     <div id="receiptPreviewModal" class="modal" style="z-index:9000;">
         <div class="modal-content" style="max-width:380px;">
+            
+            <!-- CUSTOMER BILL AREA -->
             <div id="print-area">
                 <img id="recShopLogo" src="" style="display: none;">
                 <h3 id="recShopName">SHOP NAME</h3>
@@ -443,16 +446,49 @@
                 
                 <p id="recFooter">Thank You!</p>
             </div>
+
+            <!-- KITCHEN ORDER (KOT) AREA -->
+            <div id="kot-print-area" style="display:none; background: white; width: 100%; max-width: 350px; margin: 10px auto; padding: 20px 15px; font-family: 'Poppins', sans-serif; color: #000; text-align: center; border: 1px solid #e2e8f0; border-radius: 12px; box-sizing: border-box; line-height: 1.6;">
+                <h3 style="margin: 0 0 10px 0; font-size: 22px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px dashed #777; padding-bottom: 10px;">KITCHEN ORDER (KOT)</h3>
+                
+                <div class="receipt-header-info" style="margin-top: 15px;">
+                    <div><span>Inv: <span id="kot-inv"></span></span><br><span id="kot-time" style="color:#555;"></span></div>
+                    <div style="text-align:right;" id="kot-date"></div>
+                </div>
+                
+                <div class="receipt-divider"></div>
+                
+                <table style="width: 100%; font-size: 16px; margin: 15px 0; border-collapse: collapse;">
+                    <thead><tr>
+                        <th style="text-align:left; border-bottom: 2px dashed #777; padding-bottom: 10px;">Item</th>
+                        <th style="text-align:right; border-bottom: 2px dashed #777; padding-bottom: 10px;">Qty</th>
+                    </tr></thead>
+                    <tbody id="kot-items"></tbody>
+                </table>
+                
+                <div class="receipt-divider"></div>
+            </div>
             
-            <div style="display:flex; gap:5px; margin-bottom:10px; padding:0 15px;" class="no-print">
+            <div style="display:flex; gap:5px; margin-bottom:15px; margin-top:15px; padding:0 15px;" class="no-print">
                 <input type="text" id="waPhone" placeholder="Customer Mobile (Optional)" style="flex:1; padding:10px; border:1px solid #ddd; border-radius:8px; outline:none;">
                 <button class="action-btn" onclick="sendWhatsApp()" style="background:#25D366; color:white; width:auto; padding:10px 18px; margin:0;"><span style="font-size:1.2em;">📱</span></button>
             </div>
             
-            <div style="padding: 0 15px;">
-                <button class="action-btn pay-btn no-print" onclick="window.print()" style="margin-bottom: 5px;">Print (Normal)</button>
-                <button class="action-btn no-print" style="background:#8b5cf6; color:white; margin-bottom: 5px;" onclick="printWithRawBT()">🚀 1-Click RawBT Print</button>
-                <button class="action-btn no-print" style="background:#e2e8f0;color:black;margin-top:5px;" onclick="closeAndNew()">New Sale</button>
+            <div style="padding: 0 15px;" class="no-print">
+                <h4 style="margin-bottom: 8px; font-size: 0.9em; color: #555;">👨‍🍳 Kitchen Order (KOT)</h4>
+                <div style="display:flex; gap:5px; margin-bottom:15px;">
+                    <button class="action-btn pay-btn" onclick="printNormal('kot')" style="flex:1; margin:0; background: #f59e0b;">Print KOT</button>
+                    <button class="action-btn" style="flex:1; background:#d946ef; color:white; margin:0;" onclick="printWithRawBT('kot')">🚀 KOT RawBT</button>
+                </div>
+
+                <h4 style="margin-bottom: 8px; font-size: 0.9em; color: #555;">🧾 Customer Bill</h4>
+                <div style="display:flex; gap:5px; margin-bottom:15px;">
+                    <button class="action-btn pay-btn" onclick="printNormal('customer')" style="flex:1; margin:0;">Print Bill</button>
+                    <button class="action-btn" style="flex:1; background:#8b5cf6; color:white; margin:0;" onclick="printWithRawBT('customer')">🚀 Bill RawBT</button>
+                </div>
+
+                <hr style="margin: 10px 0; border: 0; border-top: 1px solid #e2e8f0;">
+                <button class="action-btn" style="background:#e2e8f0;color:black;margin-top:5px; width:100%;" onclick="closeAndNew()">New Sale</button>
             </div>
         </div>
     </div>
@@ -998,11 +1034,22 @@
             } 
             
             let htmlItems = "";
+            let kotHtmlItems = ""; // KOT ITEM HTML STRING
             for(let i=0; i<s.items.length; i++){
                 let item = s.items[i];
                 htmlItems += '<tr><td>' + item.name + '</td><td style="text-align:center;">' + item.qty + '</td><td style="text-align:right;">' + (item.price*item.qty).toFixed(2) + '</td></tr>';
+                // Populating KOT array items
+                kotHtmlItems += '<tr><td style="padding: 5px 0;">' + item.name + '</td><td style="text-align:right; padding: 5px 0; font-size:1.15em; font-weight:700;">' + item.qty + '</td></tr>';
             }
+            
             document.getElementById('rec-items').innerHTML = htmlItems;
+            
+            // Populate KOT Data
+            document.getElementById('kot-inv').innerText = s.inv; 
+            document.getElementById('kot-date').innerHTML = s.date; 
+            document.getElementById('kot-time').innerText = s.time;
+            document.getElementById('kot-items').innerHTML = kotHtmlItems;
+
             document.getElementById('receiptPreviewModal').style.display = 'flex'; 
         }
 
@@ -1015,13 +1062,39 @@
             const encodedUri = encodeURI(csvContent); const link = document.createElement("a"); link.setAttribute("href", encodedUri); link.setAttribute("download", "sales.csv"); document.body.appendChild(link); link.click(); 
         }
 
-        // --- 1-CLICK RAWBT PRINT (PERFECT 80MM IMAGE METHOD) ---
-        function printWithRawBT() {
-            showToast("Generating Receipt...", "success");
-            var printArea = document.getElementById('print-area');
+        // --- NORMAL WINDOW PRINT WITH TOGGLE ---
+        function printNormal(type) {
+            var pArea = document.getElementById('print-area');
+            var kArea = document.getElementById('kot-print-area');
             
-            // අපි බිල් එකේ හරියටම කොපි එකක් හදලා තිරයෙන් පිටත (Invisible) තියනවා.
+            if(type === 'kot') {
+                pArea.style.display = 'none';
+                kArea.style.display = 'block';
+            } else {
+                pArea.style.display = 'block';
+                kArea.style.display = 'none';
+            }
+            
+            window.print();
+            
+            // Restore default view (Customer visible, KOT hidden)
+            pArea.style.display = 'block';
+            kArea.style.display = 'none';
+        }
+
+        // --- 1-CLICK RAWBT PRINT (PERFECT 80MM IMAGE METHOD) UPDATED FOR KOT ---
+        function printWithRawBT(type) {
+            showToast("Generating Receipt...", "success");
+            
+            var targetId = type === 'kot' ? 'kot-print-area' : 'print-area';
+            var printArea = document.getElementById(targetId);
+            
+            // Temporarily block to clone correctly
+            var originalDisplay = printArea.style.display;
+            printArea.style.display = 'block';
+            
             var clone = printArea.cloneNode(true);
+            printArea.style.display = originalDisplay; // restore
             
             var logos = clone.querySelectorAll('img');
             for(var i=0; i<logos.length; i++) {
@@ -1034,7 +1107,6 @@
                 }
             }
             
-            // තිරයේ සීමාවන් කැඩීමට සහ Padding එකතු කිරීමට ක්ලෝන එක වෙනස් කිරීම
             clone.style.position = 'absolute';
             clone.style.top = '0';
             clone.style.left = '-9999px'; 
@@ -1043,20 +1115,22 @@
             clone.style.maxHeight = 'none';
             clone.style.overflow = 'visible';
             clone.style.margin = '0';
-            clone.style.padding = '20px 20px 60px 20px'; // යටට සහ වටේට හොඳට ඉඩ දුන්නා
+            // Added 100px bottom padding for extra length
+            clone.style.padding = '20px 20px 100px 20px'; 
             clone.style.background = 'white';
             clone.style.border = 'none';
             clone.style.borderRadius = '0';
-            clone.style.lineHeight = '1.6'; // පේළි අතර පරතරය
+            clone.style.lineHeight = '1.6'; 
             
             document.body.appendChild(clone);
 
             html2canvas(clone, { 
-                scale: 1.5, // 384 x 1.5 = 576px (80mm Printer Perfect Width)
+                scale: 1.5, 
                 useCORS: true,
                 backgroundColor: "#ffffff",
                 width: 384,
-                windowHeight: clone.scrollHeight + 50 
+                // Extra height calculation to accommodate bottom padding
+                windowHeight: clone.scrollHeight + 100 
             }).then(function(canvas) {
                 document.body.removeChild(clone); 
                 
@@ -1065,7 +1139,7 @@
                 window.location.href = intentUrl;
                 
             }).catch(function(error) {
-                document.body.removeChild(clone);
+                if(document.body.contains(clone)) document.body.removeChild(clone);
                 showToast("Print Error", "error");
             });
         }
