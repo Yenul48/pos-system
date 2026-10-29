@@ -1083,66 +1083,71 @@
         }
 
         // --- 1-CLICK RAWBT PRINT (PERFECT 80MM IMAGE METHOD) UPDATED FOR KOT ---
-        function printWithRawBT(type) {
-            showToast("Generating Receipt...", "success");
-            
-            var targetId = type === 'kot' ? 'kot-print-area' : 'print-area';
-            var printArea = document.getElementById(targetId);
-            
-            // Temporarily block to clone correctly
-            var originalDisplay = printArea.style.display;
-            printArea.style.display = 'block';
-            
-            var clone = printArea.cloneNode(true);
-            printArea.style.display = originalDisplay; // restore
-            
-            var logos = clone.querySelectorAll('img');
-            for(var i=0; i<logos.length; i++) {
-                if(logos[i].style.display === 'none') {
-                    logos[i].parentNode.removeChild(logos[i]);
-                } else {
-                    logos[i].style.maxWidth = '100px';
-                    logos[i].style.margin = '0 auto 15px auto';
-                    logos[i].style.display = 'block';
-                }
-            }
-            
-            clone.style.position = 'absolute';
-            clone.style.top = '0';
-            clone.style.left = '-9999px'; 
-            clone.style.width = '384px'; 
-            clone.style.height = 'auto'; 
-            clone.style.maxHeight = 'none';
-            clone.style.overflow = 'visible';
-            clone.style.margin = '0';
-            // Added 100px bottom padding for extra length
-            clone.style.padding = '20px 20px 100px 20px'; 
-            clone.style.background = 'white';
-            clone.style.border = 'none';
-            clone.style.borderRadius = '0';
-            clone.style.lineHeight = '1.6'; 
-            
-            document.body.appendChild(clone);
-
-            html2canvas(clone, { 
-                scale: 1.5, 
-                useCORS: true,
-                backgroundColor: "#ffffff",
-                width: 384,
-                // Extra height calculation to accommodate bottom padding
-                windowHeight: clone.scrollHeight + 100 
-            }).then(function(canvas) {
-                document.body.removeChild(clone); 
-                
-                var imgData = canvas.toDataURL("image/png");
-                var intentUrl = 'intent:' + imgData + '#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end;';
-                window.location.href = intentUrl;
-                
-            }).catch(function(error) {
-                if(document.body.contains(clone)) document.body.removeChild(clone);
-                showToast("Print Error", "error");
-            });
+       // --- 1-CLICK RAWBT PRINT (PERFECT 80MM IMAGE METHOD) UPDATED FOR LENGTH ---
+function printWithRawBT(type) {
+    showToast("Generating Receipt...", "success");
+    
+    var targetId = type === 'kot' ? 'kot-print-area' : 'print-area';
+    var printArea = document.getElementById(targetId);
+    
+    // Temporarily block to clone correctly
+    var originalDisplay = printArea.style.display;
+    printArea.style.display = 'block';
+    
+    var clone = printArea.cloneNode(true);
+    printArea.style.display = originalDisplay; // restore
+    
+    var logos = clone.querySelectorAll('img');
+    for(var i=0; i<logos.length; i++) {
+        if(logos[i].style.display === 'none') {
+            logos[i].parentNode.removeChild(logos[i]);
+        } else {
+            logos[i].style.maxWidth = '100px';
+            logos[i].style.margin = '0 auto 15px auto';
+            logos[i].style.display = 'block';
         }
+    }
+    
+    // 🔥 BILL EKA USATA GANNA YATATA EXTRA SPACE EKAK ADD KIRIMA 🔥
+    var spacer = document.createElement('div');
+    spacer.style.height = '150px'; // 👈 Bill eka thawa usata oni nam meka '200px' wage karanna
+    spacer.style.background = 'white';
+    spacer.style.width = '100%';
+    clone.appendChild(spacer);
+    
+    clone.style.position = 'absolute';
+    clone.style.top = '0';
+    clone.style.left = '-9999px'; 
+    clone.style.width = '384px'; 
+    clone.style.height = 'auto'; 
+    clone.style.maxHeight = 'none';
+    clone.style.overflow = 'visible';
+    clone.style.margin = '0';
+    clone.style.padding = '20px'; 
+    clone.style.background = 'white';
+    clone.style.border = 'none';
+    clone.style.borderRadius = '0';
+    clone.style.lineHeight = '1.6'; 
+    
+    document.body.appendChild(clone);
+
+    html2canvas(clone, { 
+        scale: 1.5, 
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        width: 384
+    }).then(function(canvas) {
+        document.body.removeChild(clone); 
+        
+        var imgData = canvas.toDataURL("image/png");
+        var intentUrl = 'intent:' + imgData + '#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end;';
+        window.location.href = intentUrl;
+        
+    }).catch(function(error) {
+        if(document.body.contains(clone)) document.body.removeChild(clone);
+        showToast("Print Error", "error");
+    });
+}
 
         let html5QrCode;
         function openScanner() {
