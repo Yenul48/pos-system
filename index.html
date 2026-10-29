@@ -1083,7 +1083,7 @@
         }
 
         // --- 1-CLICK RAWBT PRINT (PERFECT 80MM IMAGE METHOD) UPDATED FOR KOT ---
-       // --- 1-CLICK RAWBT PRINT (PERFECT 80MM IMAGE METHOD) UPDATED FOR LENGTH ---
+      // --- 1-CLICK RAWBT PRINT (PERFECT 80MM IMAGE METHOD) UPDATED FOR EXACT HEIGHT ---
 function printWithRawBT(type) {
     showToast("Generating Receipt...", "success");
     
@@ -1108,13 +1108,6 @@ function printWithRawBT(type) {
         }
     }
     
-    // 🔥 BILL EKA USATA GANNA YATATA EXTRA SPACE EKAK ADD KIRIMA 🔥
-    var spacer = document.createElement('div');
-    spacer.style.height = '900px'; // 👈 Bill eka thawa usata oni nam meka '200px' wage karanna
-    spacer.style.background = 'white';
-    spacer.style.width = '100%';
-    clone.appendChild(spacer);
-    
     clone.style.position = 'absolute';
     clone.style.top = '0';
     clone.style.left = '-9999px'; 
@@ -1123,7 +1116,8 @@ function printWithRawBT(type) {
     clone.style.maxHeight = 'none';
     clone.style.overflow = 'visible';
     clone.style.margin = '0';
-    clone.style.padding = '20px'; 
+    // Preview eke thiyena gap eka saha yatata oni extra usa meken add wenawa
+    clone.style.padding = '20px 20px 150px 20px'; 
     clone.style.background = 'white';
     clone.style.border = 'none';
     clone.style.borderRadius = '0';
@@ -1131,11 +1125,16 @@ function printWithRawBT(type) {
     
     document.body.appendChild(clone);
 
+    // 🔥 Exact height eka calculate karala canvas ekata denawa (Cut wenne nathi wenna)
+    var exactHeight = clone.offsetHeight;
+
     html2canvas(clone, { 
         scale: 1.5, 
         useCORS: true,
         backgroundColor: "#ffffff",
-        width: 384
+        width: 384,
+        height: exactHeight,        // Image eke usa explicitly set kirima
+        windowHeight: exactHeight   // Window eke usa set kirima
     }).then(function(canvas) {
         document.body.removeChild(clone); 
         
