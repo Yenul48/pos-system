@@ -145,43 +145,38 @@
         /* ====================================================
            🔥 SUPER BEAUTIFUL RECEIPT DESIGN (CSS) 🔥 
            ==================================================== */
-        #print-area {
+        #print-area, #kot-print-area {
             background: white;
             width: 100%;
             max-width: 350px;
             margin: 10px auto;
-            padding: 20px 15px;
+            padding: 30px 20px; 
             font-family: 'Poppins', sans-serif;
             color: #000;
             text-align: center;
             border: 1px solid #e2e8f0;
             border-radius: 12px;
             box-sizing: border-box;
-            line-height: 1.6;
+            line-height: 2.2 !important; /* Spacing wadi kireema */
         }
-        #recShopLogo {
-            display: block;
-            margin: 0 auto 15px auto;
-            max-width: 75px;
-            border-radius: 8px;
-        }
-        #recShopName { margin: 0 0 10px 0; font-size: 22px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.3; }
-        #print-area p { margin: 8px 0; font-size: 14px; font-weight: 500; color: #222; line-height: 1.5; }
+        #recShopLogo { display: block; margin: 0 auto 20px auto; max-width: 75px; border-radius: 8px; }
+        #recShopName { margin: 0 0 15px 0; font-size: 24px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.5; }
+        #print-area p, #kot-print-area p { margin: 12px 0; font-size: 15px; font-weight: 500; color: #222; line-height: 1.8; }
         
-        .receipt-divider { border-top: 2px dashed #777; margin: 18px 0; }
+        .receipt-divider { border-top: 2px dashed #777; margin: 25px 0; }
         
-        .receipt-header-info { display: flex; justify-content: space-between; font-size: 14px; font-weight: 500; text-align: left; line-height: 1.6; margin-bottom: 8px; }
+        .receipt-header-info { display: flex; justify-content: space-between; font-size: 15px; font-weight: 500; text-align: left; line-height: 1.8; margin-bottom: 12px; }
         
-        #print-area table { width: 100%; font-size: 15px; font-weight: 500; margin: 15px 0; border-collapse: collapse; }
-        #print-area table th { font-weight: 700; border-bottom: 2px dashed #777; padding-bottom: 12px; margin-bottom: 8px; }
-        #print-area table th, #print-area table td { text-align: left; padding: 10px 0; line-height: 1.5; }
+        #print-area table, #kot-print-area table { width: 100%; font-size: 16px; font-weight: 500; margin: 20px 0; border-collapse: collapse; }
+        #print-area table th, #kot-print-area table th { font-weight: 700; border-bottom: 2px dashed #777; padding-bottom: 15px; margin-bottom: 12px; }
+        #print-area table th, #print-area table td, #kot-print-area table td { text-align: left; padding: 15px 0; line-height: 1.8; }
         #print-area table th:last-child, #print-area table td:last-child { text-align: right; }
         
-        .receipt-totals-row { display: flex; justify-content: space-between; font-size: 15px; font-weight: 600; margin-top: 10px; line-height: 1.6; }
-        .receipt-net-total { font-size: 20px; font-weight: 800; border-top: 2px dashed #777; border-bottom: 2px dashed #777; padding: 12px 0; margin: 12px 0; }
-        .receipt-balance { font-weight: 700; font-size: 16px; margin-top: 10px; }
+        .receipt-totals-row { display: flex; justify-content: space-between; font-size: 16px; font-weight: 600; margin-top: 15px; line-height: 1.8; }
+        .receipt-net-total { font-size: 22px; font-weight: 800; border-top: 2px dashed #777; border-bottom: 2px dashed #777; padding: 18px 0; margin: 18px 0; }
+        .receipt-balance { font-weight: 700; font-size: 17px; margin-top: 15px; }
         
-        #recFooter { margin-top: 25px; font-size: 14px; font-weight: 600; text-align: center; line-height: 1.6; }
+        #recFooter { margin-top: 30px; font-size: 15px; font-weight: 600; text-align: center; line-height: 1.8; }
 
         /* --- PERFECT 80MM NORMAL PRINT CSS --- */
         @media print {
@@ -209,7 +204,6 @@
                 width: 76mm !important;
                 max-width: 76mm !important;
                 margin: 0 auto !important;
-                /* restaurant bill ge usata print agalu bottom padding 40mm kottiddene */
                 padding: 2mm 2mm 40mm 2mm !important; 
                 border: none !important;
                 border-radius: 0 !important;
@@ -448,8 +442,8 @@
             </div>
 
             <!-- KITCHEN ORDER (KOT) AREA -->
-            <div id="kot-print-area" style="display:none; background: white; width: 100%; max-width: 350px; margin: 10px auto; padding: 20px 15px; font-family: 'Poppins', sans-serif; color: #000; text-align: center; border: 1px solid #e2e8f0; border-radius: 12px; box-sizing: border-box; line-height: 1.6;">
-                <h3 style="margin: 0 0 10px 0; font-size: 22px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px dashed #777; padding-bottom: 10px;">KITCHEN ORDER (KOT)</h3>
+            <div id="kot-print-area" style="display:none;">
+                <h3 style="margin: 0 0 10px 0; font-size: 24px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px dashed #777; padding-bottom: 10px;">KITCHEN ORDER (KOT)</h3>
                 
                 <div class="receipt-header-info" style="margin-top: 15px;">
                     <div><span>Inv: <span id="kot-inv"></span></span><br><span id="kot-time" style="color:#555;"></span></div>
@@ -458,10 +452,10 @@
                 
                 <div class="receipt-divider"></div>
                 
-                <table style="width: 100%; font-size: 16px; margin: 15px 0; border-collapse: collapse;">
+                <table>
                     <thead><tr>
-                        <th style="text-align:left; border-bottom: 2px dashed #777; padding-bottom: 10px;">Item</th>
-                        <th style="text-align:right; border-bottom: 2px dashed #777; padding-bottom: 10px;">Qty</th>
+                        <th style="text-align:left;">Item</th>
+                        <th style="text-align:right;">Qty</th>
                     </tr></thead>
                     <tbody id="kot-items"></tbody>
                 </table>
@@ -1037,9 +1031,9 @@
             let kotHtmlItems = ""; // KOT ITEM HTML STRING
             for(let i=0; i<s.items.length; i++){
                 let item = s.items[i];
-                htmlItems += '<tr><td>' + item.name + '</td><td style="text-align:center;">' + item.qty + '</td><td style="text-align:right;">' + (item.price*item.qty).toFixed(2) + '</td></tr>';
-                // Populating KOT array items
-                kotHtmlItems += '<tr><td style="padding: 5px 0;">' + item.name + '</td><td style="text-align:right; padding: 5px 0; font-size:1.15em; font-weight:700;">' + item.qty + '</td></tr>';
+                // Added padding inline for extra spacing in table rows
+                htmlItems += '<tr><td style="padding: 15px 0;">' + item.name + '</td><td style="text-align:center; padding: 15px 0;">' + item.qty + '</td><td style="text-align:right; padding: 15px 0;">' + (item.price*item.qty).toFixed(2) + '</td></tr>';
+                kotHtmlItems += '<tr><td style="padding: 15px 0;">' + item.name + '</td><td style="text-align:right; padding: 15px 0; font-size:1.15em; font-weight:700;">' + item.qty + '</td></tr>';
             }
             
             document.getElementById('rec-items').innerHTML = htmlItems;
@@ -1077,76 +1071,73 @@
             
             window.print();
             
-            // Restore default view (Customer visible, KOT hidden)
+            // Restore default view
             pArea.style.display = 'block';
             kArea.style.display = 'none';
         }
 
-        // --- 1-CLICK RAWBT PRINT (PERFECT 80MM IMAGE METHOD) UPDATED FOR KOT ---
-      // --- 1-CLICK RAWBT PRINT (PERFECT 80MM IMAGE METHOD) UPDATED FOR EXACT HEIGHT ---
-function printWithRawBT(type) {
-    showToast("Generating Receipt...", "success");
-    
-    var targetId = type === 'kot' ? 'kot-print-area' : 'print-area';
-    var printArea = document.getElementById(targetId);
-    
-    // Temporarily block to clone correctly
-    var originalDisplay = printArea.style.display;
-    printArea.style.display = 'block';
-    
-    var clone = printArea.cloneNode(true);
-    printArea.style.display = originalDisplay; // restore
-    
-    var logos = clone.querySelectorAll('img');
-    for(var i=0; i<logos.length; i++) {
-        if(logos[i].style.display === 'none') {
-            logos[i].parentNode.removeChild(logos[i]);
-        } else {
-            logos[i].style.maxWidth = '100px';
-            logos[i].style.margin = '0 auto 15px auto';
-            logos[i].style.display = 'block';
+        // --- 1-CLICK RAWBT PRINT (PERFECT 80MM IMAGE METHOD) ---
+        function printWithRawBT(type) {
+            showToast("Generating Receipt...", "success");
+            
+            var targetId = type === 'kot' ? 'kot-print-area' : 'print-area';
+            var printArea = document.getElementById(targetId);
+            
+            var originalDisplay = printArea.style.display;
+            printArea.style.display = 'block';
+            
+            var clone = printArea.cloneNode(true);
+            printArea.style.display = originalDisplay; 
+            
+            var logos = clone.querySelectorAll('img');
+            for(var i=0; i<logos.length; i++) {
+                if(logos[i].style.display === 'none') {
+                    logos[i].parentNode.removeChild(logos[i]);
+                } else {
+                    logos[i].style.maxWidth = '100px';
+                    logos[i].style.margin = '0 auto 15px auto';
+                    logos[i].style.display = 'block';
+                }
+            }
+            
+            clone.style.position = 'absolute';
+            clone.style.top = '0';
+            clone.style.left = '-9999px'; 
+            clone.style.width = '384px'; 
+            clone.style.height = 'auto'; 
+            clone.style.maxHeight = 'none';
+            clone.style.overflow = 'visible';
+            clone.style.margin = '0';
+            // Final spacing eka meken enawa
+            clone.style.padding = '30px 20px 150px 20px'; 
+            clone.style.background = 'white';
+            clone.style.border = 'none';
+            clone.style.borderRadius = '0';
+            
+            document.body.appendChild(clone);
+
+            // Exact height calculation to prevent cutoff
+            var exactHeight = clone.offsetHeight;
+
+            html2canvas(clone, { 
+                scale: 1.5, 
+                useCORS: true,
+                backgroundColor: "#ffffff",
+                width: 384,
+                height: exactHeight,        
+                windowHeight: exactHeight   
+            }).then(function(canvas) {
+                document.body.removeChild(clone); 
+                
+                var imgData = canvas.toDataURL("image/png");
+                var intentUrl = 'intent:' + imgData + '#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end;';
+                window.location.href = intentUrl;
+                
+            }).catch(function(error) {
+                if(document.body.contains(clone)) document.body.removeChild(clone);
+                showToast("Print Error", "error");
+            });
         }
-    }
-    
-    clone.style.position = 'absolute';
-    clone.style.top = '0';
-    clone.style.left = '-9999px'; 
-    clone.style.width = '384px'; 
-    clone.style.height = 'auto'; 
-    clone.style.maxHeight = 'none';
-    clone.style.overflow = 'visible';
-    clone.style.margin = '0';
-    // Preview eke thiyena gap eka saha yatata oni extra usa meken add wenawa
-    clone.style.padding = '20px 20px 150px 20px'; 
-    clone.style.background = 'white';
-    clone.style.border = 'none';
-    clone.style.borderRadius = '0';
-    clone.style.lineHeight = '1.6'; 
-    
-    document.body.appendChild(clone);
-
-    // 🔥 Exact height eka calculate karala canvas ekata denawa (Cut wenne nathi wenna)
-    var exactHeight = clone.offsetHeight;
-
-    html2canvas(clone, { 
-        scale: 1.5, 
-        useCORS: true,
-        backgroundColor: "#ffffff",
-        width: 384,
-        height: exactHeight,        // Image eke usa explicitly set kirima
-        windowHeight: exactHeight   // Window eke usa set kirima
-    }).then(function(canvas) {
-        document.body.removeChild(clone); 
-        
-        var imgData = canvas.toDataURL("image/png");
-        var intentUrl = 'intent:' + imgData + '#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end;';
-        window.location.href = intentUrl;
-        
-    }).catch(function(error) {
-        if(document.body.contains(clone)) document.body.removeChild(clone);
-        showToast("Print Error", "error");
-    });
-}
 
         let html5QrCode;
         function openScanner() {
